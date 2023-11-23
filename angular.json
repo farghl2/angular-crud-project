@@ -28,8 +28,11 @@
               "projects/user/src/assets"
             ],
             "styles": [
+              "node_modules/ngx-spinner/animations/square-loader.css",
+              "./node_modules/ngx-toastr/toastr.css",
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "./node_modules/bootstrap/dist/css/bootstrap.css",
+
               "projects/user/src/styles.scss"
             ],
             "scripts": [
@@ -101,6 +104,8 @@
               "projects/user/src/assets"
             ],
             "styles": [
+              "node_modules/ngx-spinner/animations/square-loader.css",
+              "./node_modules/ngx-toastr/toastr.css",
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "./node_modules/bootstrap/dist/css/bootstrap.css",
               "projects/user/src/styles.scss"
@@ -138,6 +143,8 @@
               "projects/admin/src/assets"
             ],
             "styles": [
+              "node_modules/ngx-spinner/animations/square-loader.css",
+              "./node_modules/ngx-toastr/toastr.css",
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "./node_modules/bootstrap/dist/css/bootstrap.css",
               "projects/admin/src/styles.scss"
@@ -211,6 +218,8 @@
               "projects/admin/src/assets"
             ],
             "styles": [
+              "node_modules/ngx-spinner/animations/square-loader.css",
+              "./node_modules/ngx-toastr/toastr.css",
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "./node_modules/bootstrap/dist/css/bootstrap.css",
               "projects/admin/src/styles.scss"
