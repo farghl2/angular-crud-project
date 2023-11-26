@@ -9,14 +9,14 @@
                 <div class="col-md-3">
                     <mat-form-field appearance="outline" class="w-100">
                         <mat-label>Search</mat-label>
-                        <input matInput  placeholder="title search">
+                        <input matInput  placeholder="title search" (keyup)="search($event.target)">
                     </mat-form-field>
                 </div>
                 <div class="col-md-3">
 
                     <mat-form-field appearance="outline" class="w-100">
                         <mat-label>By User</mat-label>
-                        <mat-select >
+                        <mat-select (selectionChange)="selectedUser($event)">
                             <mat-option *ngFor="let user of users" [value]="user?.id">
                               {{user?.name}}
                             </mat-option>
@@ -26,7 +26,7 @@
                 <div class="col-md-3">
                     <mat-form-field appearance="outline" class="w-100">
                         <mat-label>Status</mat-label>
-                        <mat-select>
+                        <mat-select (selectionChange)="selectedStatus($event)">
                             <mat-option *ngFor="let item of status" [value]="item?.id">
                               {{item?.name}}
                             </mat-option>
@@ -52,7 +52,9 @@
             <!-- Position Column -->
             <ng-container matColumnDef="position">
               <th mat-header-cell *matHeaderCellDef> No. </th>
-              <td mat-cell *matCellDef="let element;let index = index"> {{index + 1}} </td>
+              <td mat-cell *matCellDef="let element;let index = index">
+              <img [src]="baseApi +element.image" alt="">
+              </td>
             </ng-container>
 
             <!-- Name Column -->
@@ -68,9 +70,9 @@
             </ng-container>
 
             <!-- Symbol Column -->
-            <ng-container matColumnDef="deadLineDate">
+            <ng-container matColumnDef="deadline">
                 <th mat-header-cell *matHeaderCellDef> DeadLine Date </th>
-                <td mat-cell *matCellDef="let element"> {{element.deadLineDate}} </td>
+                <td mat-cell *matCellDef="let element"> {{element.deadline}} </td>
               </ng-container>
             <ng-container matColumnDef="status">
                 <th mat-header-cell *matHeaderCellDef> Status </th>
@@ -80,8 +82,8 @@
             <ng-container matColumnDef="actions" >
                 <th mat-header-cell *matHeaderCellDef class="w-20">  </th>
                 <td mat-cell *matCellDef="let element">
-                    <button class="btn btn-warning" mat-raised-button>Update</button>
-                    <button  mat-raised-button color="warn">Delete</button>
+                    <button class="btn btn-warning" mat-raised-button (click)="onUpdateTask(element)">Update</button>
+                    <button  mat-raised-button color="warn" (click)="onDeleteTask(element._id)">Delete</button>
                 </td>
               </ng-container>
 

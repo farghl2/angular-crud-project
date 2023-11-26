@@ -9,6 +9,12 @@ button {
     }
 }
 
+table {
+  img {
+    width:90px;
+    padding:5px;
+  }
+}
 :host ::ng-deep {
     table {
         thead {

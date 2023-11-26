@@ -1,72 +1,130 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { TasksService } from '../../services/tasks.service';
 import * as moment from 'moment';
+import { ToastrService } from 'ngx-toastr';
+import { ConfirmationComponent } from '../confirmation/confirmation.component';
 
 @Component({
   selector: 'app-add-task',
   templateUrl: './add-task.component.html',
-  styleUrls: ['./add-task.component.scss']
+  styleUrls: ['./add-task.component.scss'],
 })
 export class AddTaskComponent implements OnInit {
-  taskForm!:FormGroup;
+  taskForm!: FormGroup;
+  loadingTask: boolean = false;
+  existData: any;
   constructor(
-    private fb:FormBuilder ,
-     public dialog: MatDialogRef<AddTaskComponent> ,
-      public matDialog:MatDialog,
-      public tasksService:TasksService
-      ) { }
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private fb: FormBuilder,
+    public dialog: MatDialogRef<AddTaskComponent>,
+    public matDialog: MatDialog,
+    public tasksService: TasksService,
+    private tostarService: ToastrService
+  ) {}
 
-  users:any = [
-    {name:"Moahmed" , id:1},
-    {name:"Ali" , id:2},
-    {name:"Ahmed" , id:3},
-    {name:"Zain" , id:4},
-  ]
+  users: any = [
+    { name: 'Moahmed', id: '65626af4359c4022bf6ba53b' },
+    { name: 'Ali', id: '6562789c8f24e2dd6d4264b3' },
+  
+  ];
   ngOnInit(): void {
     this.creatFormTask();
   }
 
-  creatFormTask(){
+  creatFormTask() {
     this.taskForm = this.fb.group({
-      title:['',Validators.required],
-      image:['',Validators.required],
-      userId:['',Validators.required],
-      description:['',Validators.required],
-      deadline:['',Validators.required],
-    })
+      title: [this.data?.title || '', Validators.required],
+      image: [this.data?.image || '', Validators.required],
+      userId: [this.data?.userId?._id || '', Validators.required],
+      description: [this.data?.description || '', Validators.required],
+      deadline: [
+        this.data
+          ? new Date(
+              this.data.deadline.split('-').reverse().join('-')
+            ).toISOString()
+          : '',
+        Validators.required,
+      ],
+    });
+
+    this.existData = this.taskForm.value;
   }
 
-  selectImage(event:any){
+  selectImage(event: any) {
     this.taskForm.get('image')?.setValue(event.target.files[0]);
   }
 
-  creatTask(){
-
+  creatTask() {
+    this.loadingTask = true;
     let formData = this.preparFormData();
-    this.tasksService.addTask(formData).subscribe((res)=>{
-      this.dialog.close()
-
-    },(error)=>{
-      console.log(error.error.message);
-    })
-
+    this.tasksService.addTask(formData).subscribe(
+      (res) => {
+        this.tostarService.success('create task successfuly');
+        this.loadingTask = false;
+        this.dialog.close(true);
+      },
+      (error) => {
+        this.tostarService.error(error.error.message);
+        this.loadingTask = false;
+      }
+    );
   }
 
-  preparFormData(){
-    let newDate =moment(this.taskForm.value['deadline']).format('DD-MM-YYYY')
+  preparFormData() {
+    let newDate = moment(this.taskForm.value['deadline']).format('DD-MM-YYYY');
     let formData = new FormData();
-    Object.entries((this.taskForm.value).forEach(([key, value]:any) => {
-        (key === 'deadline')?formData.append(key, newDate):formData.append(key, value);
-        // formData.append(key, value);
-    }))
+
+    Object.entries(this.taskForm.value).forEach(([key, value]: any) => {
+      if (key === 'deadline') {
+        formData.append(key, newDate);
+      } else {
+        formData.append(key, value);
+      }
+    });
 
     return formData;
   }
 
-  onClose(){
-    this.dialog.close();
+  updateTask() {
+    this.loadingTask = true;
+    let formData = this.preparFormData();
+    this.tasksService.updateTask(formData, this.data._id).subscribe(
+      (res) => {
+        this.tostarService.success('create task successfuly');
+        this.loadingTask = false;
+        this.dialog.close(true);
+      },
+      (error) => {
+        this.tostarService.error(error.error.message);
+        this.loadingTask = false;
+      }
+    );
   }
 
+  onClose() {
+    let detection = false;
+    Object.keys(this.existData).forEach((key) => {
+      if (this.existData[key] !== this.taskForm.value[key]) {
+        detection = true;
+      }
+    });
+    if (detection) {
+      const dialogRef = this.matDialog.open(ConfirmationComponent, {
+        width: '750px',
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+        }
+      });
+    } else {
+      this.dialog.close();
+    }
+  }
 }

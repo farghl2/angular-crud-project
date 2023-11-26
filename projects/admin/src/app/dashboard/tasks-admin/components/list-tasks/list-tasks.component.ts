@@ -4,6 +4,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { AddTaskComponent } from '../add-task/add-task.component';
 import { TasksService } from '../../services/tasks.service';
 import { Dialog } from '@angular/cdk/dialog';
+import { retry } from 'rxjs';
+
+import { environment as env } from 'projects/admin/src/environments/environment';
 export interface PeriodicElement {
   title: string;
   user: string;
@@ -11,43 +14,34 @@ export interface PeriodicElement {
   status: string;
 }
 
-const ELEMENT_DATA: PeriodicElement[] = [
-  {status:'Complete' , title: 'Hydrogen', user: "1.0079", deadLineDate:"10-11-2022" },
-  {status:'In-Prossing' , title: 'Helium', user: "4.0026", deadLineDate:"10-11-2022" },
-  {status:'Complete' , title: 'Lithium', user: "6.941", deadLineDate:"10-11-2022" },
-  {status:'Complete' , title: 'Beryllium', user: "9.0122", deadLineDate:"10-11-2022" },
-  {status:'Complete' , title: 'Boron', user: "10.811", deadLineDate:"10-11-2022" },
-  {status:'Complete' , title: 'Carbon', user: "12.010", deadLineDate:"10-11-2022" },
-  {status:'Complete' , title: 'Nitrogen', user: "14.006", deadLineDate:"10-11-2022" },
-  {status:'Complete' , title: 'Oxygen', user: "15.999", deadLineDate:"10-11-2022" },
-  {status:'Complete' , title: 'Fluorine', user: "18.998", deadLineDate:"10-11-2022" },
-  { status:'Complete' , title: 'Neon', user: "20.179", deadLineDate:"10-11-2022" },
-];
+
 @Component({
   selector: 'app-list-tasks',
   templateUrl: './list-tasks.component.html',
   styleUrls: ['./list-tasks.component.scss']
 })
 export class ListTasksComponent implements OnInit {
-  displayedColumns: string[] = ['position', 'title', 'user' ,'deadLineDate','status', 'actions'];
-  dataSource = ELEMENT_DATA;
+  displayedColumns: string[] = ['position', 'title', 'user' ,'deadline','status', 'actions'];
+  dataSource:any = [];
   tasksFilter!:FormGroup
+  filteration:any ={}
+  timeOutId:any;
   users:any = [
-    {name:"Moahmed" , id:1},
-    {name:"Ali" , id:2},
-    {name:"Ahmed" , id:3},
-    {name:"Zain" , id:4},
+    { name: 'Moahmed', id: '65626af4359c4022bf6ba53b' },
+    { name: 'Ali', id: '6562789c8f24e2dd6d4264b3' },
   ]
 
   status:any = [
     {name:"Complete" , id:1},
     {name:"In-Prossing" , id:2},
+    {name:"In-Progress",id:3}
   ]
+  baseApi = env.baseApi +"/";
   constructor(
     public dialog: MatDialog ,
     private fb:FormBuilder,
     private tasksService: TasksService,
-   
+
     ) { }
 
   ngOnInit(): void {
@@ -64,21 +58,81 @@ export class ListTasksComponent implements OnInit {
     })
   }
 
+  search(event:any){
+
+    this.filteration['keyword'] = event.value;
+    clearTimeout(this.timeOutId);
+    this.timeOutId = setTimeout(()=>{
+      this.getAllTasks();
+
+    },2000)
+  }
+
+  selectedUser(event:any){
+    this.filteration['userId'] = event.value;
+    this.getAllTasks();
+  }
+
+  selectedStatus(event:any){
+    this.filteration['status'] = event.value;
+    this.getAllTasks();
+  }
   getAllTasks() {
-    this.tasksService.getAllTasks().subscribe((res)=>{
-      console.log(res);
+    this.tasksService.getAllTasks(this.filteration).subscribe((res:any)=>{
+      console.log(res)
+      this.dataSource = this.mappingTasks(res.tasks);
     })
+
+  }
+
+  mappingTasks(data:any){
+    let tasks = data.map((item:any)=>{
+      return {
+        ...item,
+        user:item.userId.username
+      }
+
+
+    })
+
+    return tasks
 
   }
   addTask() {
       const dialogRef = this.dialog.open(AddTaskComponent, {
         width: '750px',
+        disableClose:true
       });
 
       dialogRef.afterClosed().subscribe(result => {
+
         if(result) {
           this.getAllTasks()
         }
       })
   }
+  onDeleteTask(id:any){
+
+    this.tasksService.deleteTask(id).subscribe((res)=>{
+      this.getAllTasks()
+      console.log(res);
+    })
+
+  }
+
+  onUpdateTask(element:any){
+    const dialogRef = this.dialog.open(AddTaskComponent, {
+      width: '750px',
+      data:element
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      if(result) {
+        this.getAllTasks()
+      }
+    })
+  }
+
+
 }
