@@ -103,12 +103,12 @@ export class ListTasksComponent implements OnInit {
 
   }
   getAllTasks() {
-    this.spinner.show();
+    
     this.tasksService.getAllTasks(this.filteration).subscribe((res:any)=>{
       this.total = res.totalItems;
       console.log(res)
       this.dataSource = this.mappingTasks(res.tasks);
-      this.spinner.hide();
+     
     })
 
   }
