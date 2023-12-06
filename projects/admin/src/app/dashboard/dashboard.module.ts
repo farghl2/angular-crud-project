@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { DashboardRoutingModule } from './dashboard-routing.module';
 import { LayoutComponent } from './layout/layout.component';
+import {NgxPaginationModule} from 'ngx-pagination';
 
 
 
@@ -13,7 +14,8 @@ import { LayoutComponent } from './layout/layout.component';
   ],
   imports: [
     CommonModule,
-    DashboardRoutingModule
+    DashboardRoutingModule,
+    NgxPaginationModule
   ]
 })
 export class DashboardModule { }

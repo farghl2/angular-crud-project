@@ -8,6 +8,7 @@ import { MaterialModule } from './material/material.module';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import {NgxPaginationModule} from 'ngx-pagination';
 
 import { ToastrModule } from 'ngx-toastr';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -26,7 +27,9 @@ import { HeadersInterceptor } from './interceptors/headers.interceptor';
     AppRoutingModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
-    NgxSpinnerModule.forRoot({ type: 'square-loader' })
+    NgxSpinnerModule.forRoot({ type: 'square-loader' }),
+    NgxPaginationModule
+
   ],
   providers: [
     {provide:HTTP_INTERCEPTORS,useClass:HeadersInterceptor, multi:true}

@@ -29,3 +29,12 @@ table {
 .w-20 {
     width: 20%!important;
 }
+
+::ng-deep .ngx-pagination {
+  margin:10px auto;
+  padding:10px
+}
+
+::ng-deep pagination-template nav {
+  text-align:center;
+}

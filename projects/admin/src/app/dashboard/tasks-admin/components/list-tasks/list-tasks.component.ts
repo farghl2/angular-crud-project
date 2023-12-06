@@ -7,6 +7,8 @@ import { Dialog } from '@angular/cdk/dialog';
 import { retry } from 'rxjs';
 
 import { environment as env } from 'projects/admin/src/environments/environment';
+import { NgxSpinnerService } from 'ngx-spinner';
+import * as moment from 'moment';
 export interface PeriodicElement {
   title: string;
   user: string;
@@ -23,8 +25,12 @@ export interface PeriodicElement {
 export class ListTasksComponent implements OnInit {
   displayedColumns: string[] = ['position', 'title', 'user' ,'deadline','status', 'actions'];
   dataSource:any = [];
+  page:any =1;
   tasksFilter!:FormGroup
-  filteration:any ={}
+  filteration:any ={
+    page:this.page,
+    limit:10
+  }
   timeOutId:any;
   users:any = [
     { name: 'Moahmed', id: '65626af4359c4022bf6ba53b' },
@@ -37,16 +43,27 @@ export class ListTasksComponent implements OnInit {
     {name:"In-Progress",id:3}
   ]
   baseApi = env.baseApi +"/";
+
+  pageSize:any =10;
+  total:any;
   constructor(
     public dialog: MatDialog ,
     private fb:FormBuilder,
     private tasksService: TasksService,
+    private spinner: NgxSpinnerService
 
     ) { }
 
   ngOnInit(): void {
     this.createform()
     this.getAllTasks();
+  }
+
+  p(event:any){
+    this.page = event
+    this.filteration['page'] = event;
+    this.getAllTasks();
+
   }
 
   createform() {
@@ -59,7 +76,7 @@ export class ListTasksComponent implements OnInit {
   }
 
   search(event:any){
-
+    this.filteration['page'] = 1;
     this.filteration['keyword'] = event.value;
     clearTimeout(this.timeOutId);
     this.timeOutId = setTimeout(()=>{
@@ -77,10 +94,21 @@ export class ListTasksComponent implements OnInit {
     this.filteration['status'] = event.value;
     this.getAllTasks();
   }
+
+  selectDate(event:any, type:any){
+    this.filteration[type] =moment(event.value).format('DD-MM-YYYY');
+    if(type == 'toDate' && this.filteration['toDate'] !== 'Invalid date'){
+      this.getAllTasks();
+    }
+
+  }
   getAllTasks() {
+    this.spinner.show();
     this.tasksService.getAllTasks(this.filteration).subscribe((res:any)=>{
+      this.total = res.totalItems;
       console.log(res)
       this.dataSource = this.mappingTasks(res.tasks);
+      this.spinner.hide();
     })
 
   }
