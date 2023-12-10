@@ -22,4 +22,13 @@ button.addTask {
 
 h2 {
   color: #bc1059;
+}
+
+::ng-deep .ngx-pagination {
+  margin: 10px auto;
+  padding: 10px;
+}
+
+::ng-deep pagination-template nav {
+  text-align: center;
 }/*# sourceMappingURL=list-tasks.component.css.map */

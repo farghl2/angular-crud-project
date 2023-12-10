@@ -40,6 +40,7 @@ export class ListTasksComponent implements OnInit {
     {name:"Complete" , id:1},
     {name:"In-Prossing" , id:2},
   ]
+  page:any =1;
   constructor(public dialog: MatDialog ,private fb:FormBuilder) { }
 
   ngOnInit(): void {
@@ -56,6 +57,11 @@ export class ListTasksComponent implements OnInit {
   }
 
   getAllTasks() {
+
+  }
+
+  p(event:any){
+    this.page = event;
 
   }
 }
