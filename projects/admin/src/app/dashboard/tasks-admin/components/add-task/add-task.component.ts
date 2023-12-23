@@ -9,6 +9,7 @@ import { TasksService } from '../../services/tasks.service';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { ConfirmationComponent } from '../confirmation/confirmation.component';
+import { UsersService } from '../../../manage-users/services/users.service';
 
 @Component({
   selector: 'app-add-task',
@@ -25,16 +26,17 @@ export class AddTaskComponent implements OnInit {
     public dialog: MatDialogRef<AddTaskComponent>,
     public matDialog: MatDialog,
     public tasksService: TasksService,
-    private tostarService: ToastrService
+    private tostarService: ToastrService,
+    private userService:UsersService
   ) {}
 
-  users: any = [
-    { name: 'Moahmed', id: '65626af4359c4022bf6ba53b' },
-    { name: 'Ali', id: '6562789c8f24e2dd6d4264b3' },
-  
-  ];
+  users: any = [];
   ngOnInit(): void {
     this.creatFormTask();
+    this.userService.user.subscribe((res:any)=>{
+      this.users = res;
+    })
+
   }
 
   creatFormTask() {

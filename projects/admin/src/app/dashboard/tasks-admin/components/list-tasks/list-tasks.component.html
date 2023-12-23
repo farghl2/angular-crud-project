@@ -17,8 +17,8 @@
                     <mat-form-field appearance="outline" class="w-100">
                         <mat-label>By User</mat-label>
                         <mat-select (selectionChange)="selectedUser($event)">
-                            <mat-option *ngFor="let user of users" [value]="user?.id">
-                              {{user?.name}}
+                            <mat-option *ngFor="let user of users" [value]="user?._id">
+                              {{user?.username}}
                             </mat-option>
                           </mat-select>
                     </mat-form-field>
@@ -93,7 +93,7 @@
             currentPage: page,
             totalItems: total };"></tr>
           </table>
-          
+
         </div>
       </div>
       <pagination-controls (pageChange)="p($event)" id="tasks" ></pagination-controls>

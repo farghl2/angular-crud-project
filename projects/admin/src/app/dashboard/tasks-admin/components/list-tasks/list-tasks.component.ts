@@ -9,6 +9,7 @@ import { retry } from 'rxjs';
 import { environment as env } from 'projects/admin/src/environments/environment';
 import { NgxSpinnerService } from 'ngx-spinner';
 import * as moment from 'moment';
+import { UsersService } from '../../../manage-users/services/users.service';
 export interface PeriodicElement {
   title: string;
   user: string;
@@ -32,10 +33,7 @@ export class ListTasksComponent implements OnInit {
     limit:10
   }
   timeOutId:any;
-  users:any = [
-    { name: 'Moahmed', id: '65626af4359c4022bf6ba53b' },
-    { name: 'Ali', id: '6562789c8f24e2dd6d4264b3' },
-  ]
+  users:any = []
 
   status:any = [
     {name:"Complete" , id:1},
@@ -50,13 +48,18 @@ export class ListTasksComponent implements OnInit {
     public dialog: MatDialog ,
     private fb:FormBuilder,
     private tasksService: TasksService,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private usersService:UsersService
 
     ) { }
 
   ngOnInit(): void {
     this.createform()
     this.getAllTasks();
+    this.usersService.user.subscribe((res:any)=>{
+      this.users = res;
+      console.log(res)
+    })
   }
 
   p(event:any){
@@ -103,12 +106,11 @@ export class ListTasksComponent implements OnInit {
 
   }
   getAllTasks() {
-    
+
     this.tasksService.getAllTasks(this.filteration).subscribe((res:any)=>{
       this.total = res.totalItems;
-      console.log(res)
       this.dataSource = this.mappingTasks(res.tasks);
-     
+
     })
 
   }
